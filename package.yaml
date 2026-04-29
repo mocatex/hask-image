@@ -1,0 +1,21 @@
+name: hask-image
+version: 0.1.0.0
+github: "mocatex/hask-image"
+
+dependencies:
+  - base >= 4.7 && < 5
+  - monomer
+  - JuicyPixels
+  - vector
+  - text
+  - lens
+
+library:
+  source-dirs: src
+
+executables:
+  hasklens-exe:
+    main: Main.hs
+    source-dirs: app
+    dependencies:
+      - hasklens # This tells the app to use the code in src/
