@@ -5,10 +5,15 @@ import Control.Lens (makeLenses)
 import Data.Text (Text)
 
 -- | Available image filters
-data FilterType 
-  = None 
-  | Invert 
-  | Grayscale 
+data FilterType
+  = None
+  | Invert
+  | Grayscale
+  | Sepia
+  | Brighten
+  | Darken
+  | Threshold
+  | ChannelSwap
   deriving (Eq, Show, Enum, Bounded)
 
 -- | THE BRAIN (Data Models & Events)

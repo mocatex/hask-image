@@ -22,10 +22,45 @@ grayscalePixel (PixelRGB8 r g b) =
   let v = round (0.299 * fromIntegral r + 0.587 * fromIntegral g + 0.114 * fromIntegral b)
   in PixelRGB8 v v v
 
+clamp8 :: Int -> Pixel8
+clamp8 x = fromIntegral (max 0 (min 255 x))
+
+sepiaPixel :: PixelRGB8 -> PixelRGB8
+sepiaPixel (PixelRGB8 r g b) =
+  let rf = fromIntegral r :: Double
+      gf = fromIntegral g :: Double
+      bf = fromIntegral b :: Double
+      nr = round (0.393 * rf + 0.769 * gf + 0.189 * bf)
+      ng = round (0.349 * rf + 0.686 * gf + 0.168 * bf)
+      nb = round (0.272 * rf + 0.534 * gf + 0.131 * bf)
+  in PixelRGB8 (clamp8 nr) (clamp8 ng) (clamp8 nb)
+
+brightenPixel :: PixelRGB8 -> PixelRGB8
+brightenPixel (PixelRGB8 r g b) =
+  PixelRGB8 (clamp8 (fromIntegral r + 40)) (clamp8 (fromIntegral g + 40)) (clamp8 (fromIntegral b + 40))
+
+darkenPixel :: PixelRGB8 -> PixelRGB8
+darkenPixel (PixelRGB8 r g b) =
+  PixelRGB8 (clamp8 (fromIntegral r - 40)) (clamp8 (fromIntegral g - 40)) (clamp8 (fromIntegral b - 40))
+
+thresholdPixel :: PixelRGB8 -> PixelRGB8
+thresholdPixel (PixelRGB8 r g b) =
+  let v = round (0.299 * fromIntegral r + 0.587 * fromIntegral g + 0.114 * fromIntegral b) :: Int
+      o = if v >= 128 then 255 else 0
+  in PixelRGB8 o o o
+
+channelSwapPixel :: PixelRGB8 -> PixelRGB8
+channelSwapPixel (PixelRGB8 r g b) = PixelRGB8 b r g
+
 -- | Selects the pure function based on the requested filter type.
 getFilterFunc :: FilterType -> (PixelRGB8 -> PixelRGB8)
 getFilterFunc Invert = invertPixel
 getFilterFunc Grayscale = grayscalePixel
+getFilterFunc Sepia = sepiaPixel
+getFilterFunc Brighten = brightenPixel
+getFilterFunc Darken = darkenPixel
+getFilterFunc Threshold = thresholdPixel
+getFilterFunc ChannelSwap = channelSwapPixel
 getFilterFunc None = id
 
 --------------------------------------------------------------------------------
